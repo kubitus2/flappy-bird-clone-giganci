@@ -6,6 +6,7 @@ public class BirdController : MonoBehaviour
     private static readonly int FlapTrigger = Animator.StringToHash("flapTrigger");
 
     public static Action OnLost;
+    public static Action OnFlap;
 
     [SerializeField] private Animator animator;
     [SerializeField] private float velocity = 3.5f;
@@ -77,6 +78,7 @@ public class BirdController : MonoBehaviour
     {
         animator.SetTrigger(FlapTrigger);
         rb.velocity = Vector2.up * velocity;
+        OnFlap?.Invoke();
     }
 
     private void ProcessRotation()

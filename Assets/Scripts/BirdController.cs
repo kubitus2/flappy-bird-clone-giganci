@@ -5,6 +5,8 @@ public class BirdController : MonoBehaviour
 {
     private static readonly int FlapTrigger = Animator.StringToHash("flapTrigger");
 
+    public static Action OnLost;
+
     [SerializeField] private Animator animator;
     [SerializeField] private float velocity = 3.5f;
     [SerializeField] private float rotationSpeed = 5f;
@@ -12,13 +14,41 @@ public class BirdController : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    private bool _isActive;
+
+    private bool IsActive
+    {
+        get => _isActive;
+        set
+        {
+            _isActive = value;
+
+            rb.simulated = _isActive;
+
+            if (value)
+                return;
+
+            ResetPosition();
+            OnLost?.Invoke();
+        }
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.simulated = false;
+    }
+
+    public void StartGame()
+    {
+        IsActive = true;
     }
 
     private void Update()
     {
+        if (!_isActive)
+            return;
+
         if (Input.GetKeyDown("space"))
             Flap();
     }
@@ -28,13 +58,12 @@ public class BirdController : MonoBehaviour
         ProcessRotation();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (other.gameObject.layer != LayerMask.NameToLayer("Obstacles"))
+        if (collision.gameObject.layer != LayerMask.NameToLayer("Obstacles"))
             return;
-        
-        Debug.Log(other.gameObject.name);
-        ResetPosition();
+
+        IsActive = false;
     }
 
     private void ResetPosition()
@@ -42,9 +71,8 @@ public class BirdController : MonoBehaviour
         transform.position = startPosition.position;
         transform.rotation = startPosition.rotation;
         rb.velocity = Vector2.zero;
-        rb.simulated = false;
     }
-    
+
     private void Flap()
     {
         animator.SetTrigger(FlapTrigger);
@@ -53,6 +81,9 @@ public class BirdController : MonoBehaviour
 
     private void ProcessRotation()
     {
-        transform.rotation = Quaternion.Euler(0f, 0f, rb.velocity.y * rotationSpeed );
+        if (!_isActive)
+            return;
+
+        transform.rotation = Quaternion.Euler(0f, 0f, rb.velocity.y * rotationSpeed);
     }
 }

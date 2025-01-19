@@ -9,4 +9,9 @@ public class StartingPanel : MonoBehaviour
     {
         OnStartGame?.Invoke();
     }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }

@@ -1,8 +1,11 @@
 using TMPro;
 using UnityEngine;
+using Utility;
 
 public class ScoreManager : MonoBehaviour
 {
+    private const string BEST_SCORE_KEY = "bestScore";
+    
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI bestScoreText;
 
@@ -25,6 +28,7 @@ public class ScoreManager : MonoBehaviour
         get => bestScore;
         set
         {
+            SaveScore(value);
             bestScore = value;
             bestScoreText.text = $"Najlepszy wynik: {bestScore.ToString()}";
         }
@@ -32,13 +36,15 @@ public class ScoreManager : MonoBehaviour
 
     private void OnEnable()
     {
-        PointTrigger.OnScored += UpdateScore;
+        BestScore = PlayerPrefs.GetInt(BEST_SCORE_KEY, 0);
+        
+        PointCounter.OnScored += UpdateScore;
         BirdController.OnLost += Reset;
     }
 
     private void OnDisable()
     {
-        PointTrigger.OnScored -= UpdateScore;
+        PointCounter.OnScored -= UpdateScore;
         BirdController.OnLost -= Reset;
     }
     
@@ -49,11 +55,26 @@ public class ScoreManager : MonoBehaviour
 
     private void UpdateScore()
     {
-        Score += 5;
+        Score += 1;
 
+        CheckDivisibility(score);
         if (score <= bestScore) 
             return;
         
         BestScore = score;
+    }
+
+    private static void CheckDivisibility(float score)
+    {
+        if (score % 10 != 0)
+            return;
+        
+        GameController.Instance.BumpSpeed();
+    }
+    
+    private void SaveScore(int value)
+    {
+        Debug.Log(value);
+        PlayerPrefs.SetInt(BEST_SCORE_KEY, value);
     }
 }

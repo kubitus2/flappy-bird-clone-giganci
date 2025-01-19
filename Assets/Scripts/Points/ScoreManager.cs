@@ -1,74 +1,67 @@
 using TMPro;
 using UnityEngine;
+using Utility;
 
 public class ScoreManager : MonoBehaviour
 {
+    [SerializeField] private int accelerateEveryNthPoint = 10;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI bestScoreText;
 
-    private int score;
+    private int _score;
 
     private int Score
     {
-        get => score;
+        get => _score;
         set
         {
-            score = value;
-            scoreText.text = score.ToString();
+            _score = value;
+            scoreText.text = _score.ToString();
         }
     }
 
-    private int bestScore;
+    private int _bestScore;
 
     private int BestScore
     {
-        get => bestScore;
+        get => _bestScore;
         set
         {
-            bestScore = value;
-            bestScoreText.text = $"Najlepszy wynik: {bestScore.ToString()}";
+            _bestScore = value;
+            bestScoreText.text = $"Najlepszy wynik: {_bestScore.ToString()}";
         }
     }
 
     private void OnEnable()
     {
         BestScore = ScoreSaver.GetScore();
-
-        PointCounter.OnScored += UpdateScore;
-        BirdController.OnLost += Reset;
     }
 
-    private void OnDisable()
-    {
-        PointCounter.OnScored -= UpdateScore;
-        BirdController.OnLost -= Reset;
-    }
-
-    private void Reset()
+    public void Reset()
     {
         Score = 0;
     }
 
-    private void UpdateScore()
+    public void UpdateScore()
     {
         Score += 1;
 
-        CheckDivisibility(score);
+        CheckDivisibility(_score);
         CheckBestScore();
     }
 
     private void CheckBestScore()
     {
-        if (score <= bestScore)
+        if (_score <= _bestScore)
             return;
 
-        BestScore = score;
-        ScoreSaver.Save(score);
+        BestScore = _score;
+        ScoreSaver.Save(_score);
     }
 
-    private static void CheckDivisibility(float score)
+    private void CheckDivisibility(int score)
     {
-        if (score % 10 != 0)
+        if (!score.CheckDivisibility(accelerateEveryNthPoint))
             return;
 
         GameController.Instance.BumpSpeed();

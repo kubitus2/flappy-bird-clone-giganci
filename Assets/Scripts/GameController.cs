@@ -1,4 +1,5 @@
 using UnityEngine;
+using Utility;
 
 public class GameController : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject startingPanel;
     [SerializeField] private PointCounter pointCounter;
     [SerializeField] private AudioManager audioManager;
+    [SerializeField] private ScoreManager scoreManager;
 
     public float Velocity { get; private set; }
     public static GameController Instance { get; private set; }
@@ -22,13 +24,11 @@ public class GameController : MonoBehaviour
         spawner.SetActive(false);
     }
 
-    private void OnEnable()
+    public void UpdateScore()
     {
-        StartingPanel.OnStartGame += StartGame;
-        BirdController.OnLost += Lose;
+        scoreManager.UpdateScore();
     }
-
-    private void StartGame()
+    public void StartGame()
     {
         Velocity = 1.2f;
         startingPanel.SetActive(false);
@@ -37,28 +37,24 @@ public class GameController : MonoBehaviour
         audioManager.PlayMusic();
         pointCounter.StartCounting();
     }
-
-    public void BumpSpeed()
-    {
-        Velocity += speedIncrement;
-    }
-
-    private void Lose()
+    
+    public void Lose()
     {
         startingPanel.SetActive(true);
         RemoveObstacles();
         spawner.SetActive(false);
         audioManager.StopMusic();
         pointCounter.StopCounting();
+        scoreManager.Reset();
     }
 
+    public void BumpSpeed()
+    {
+        Velocity += speedIncrement;
+    }
+    
     private void RemoveObstacles()
     {
-        var t = spawner.transform;
-        for (var i = 0; i < t.childCount; i++)
-        {
-            var child = t.GetChild(i);
-            Destroy(child.gameObject);
-        }
+        spawner.transform.KillAllObstacles();
     }
 }

@@ -4,8 +4,7 @@ using UnityEngine;
 public class BirdController : MonoBehaviour
 {
     private static readonly int FlapTrigger = Animator.StringToHash("flapTrigger");
-
-    public static Action OnLost;
+    
     public static Action OnFlap;
 
     [Header("Animator")] 
@@ -33,7 +32,7 @@ public class BirdController : MonoBehaviour
                 return;
 
             ResetPosition();
-            OnLost?.Invoke();
+            GameController.Instance.Lose();
         }
     }
 

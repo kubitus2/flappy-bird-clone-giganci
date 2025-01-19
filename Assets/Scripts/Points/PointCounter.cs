@@ -1,11 +1,8 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
 public class PointCounter : MonoBehaviour
 {
-    public static Action OnScored;
-
     private Coroutine _timerCoroutine;
     private bool _isTimerRunning;
 
@@ -29,7 +26,7 @@ public class PointCounter : MonoBehaviour
     {
         while (_isTimerRunning)
         {
-            OnScored?.Invoke();
+            GameController.Instance.UpdateScore();
             yield return new WaitForSeconds(1f);
         }
     }

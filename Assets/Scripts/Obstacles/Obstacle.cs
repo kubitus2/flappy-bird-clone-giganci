@@ -9,4 +9,9 @@ public class Obstacle : MonoBehaviour
         if(transform.position.x < -30f)
             Destroy(gameObject);
     }
+
+    public void Kill()
+    {
+        Destroy(gameObject);
+    }
 }

@@ -1,19 +1,11 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public enum GameState
-{
-    Menu,
-    Playing
-}
 public class GameController : MonoBehaviour
 {
-    private GameState gameState = GameState.Menu;
-
     [SerializeField] private BirdController player;
     [SerializeField] private GameObject spawner;
     [SerializeField] private GameObject startingPanel;
+    [SerializeField] private AudioManager audioManager;
 
     private void Awake()
     {
@@ -28,18 +20,27 @@ public class GameController : MonoBehaviour
 
     private void StartGame()
     {
-        gameState = GameState.Playing;
         startingPanel.SetActive(false);
         spawner.SetActive(true);
         player.StartGame();
+        audioManager.PlayMusic();
     }
 
-    public void Lose()
+    private void Lose()
     {
-        gameState = GameState.Menu;
         startingPanel.SetActive(true);
+        RemoveObstacles();
         spawner.SetActive(false);
-        
+        audioManager.StopMusic();
     }
-    
+
+    private void RemoveObstacles()
+    {
+        var t = spawner.transform;
+        for (var i = 0; i < t.childCount; i++)
+        {
+            var child = t.GetChild(i);
+            Destroy(child.gameObject);
+        }
+    }
 }

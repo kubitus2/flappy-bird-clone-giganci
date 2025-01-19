@@ -8,23 +8,26 @@ public class BirdController : MonoBehaviour
     public static Action OnLost;
     public static Action OnFlap;
 
+    [Header("Animator")] 
     [SerializeField] private Animator animator;
+    
+    [Header("Movement")] 
     [SerializeField] private float velocity = 3.5f;
-    [SerializeField] private float rotationSpeed = 5f;
+
+    [Header("Starting position")] 
     [SerializeField] private Transform startPosition;
 
-    private Rigidbody2D rb;
-
+    private Rigidbody2D _rb;
     private bool _isActive;
 
-    private bool IsActive
+    public bool IsActive
     {
         get => _isActive;
         set
         {
             _isActive = value;
 
-            rb.simulated = _isActive;
+            _rb.simulated = _isActive;
 
             if (value)
                 return;
@@ -36,8 +39,8 @@ public class BirdController : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.simulated = false;
+        _rb = GetComponent<Rigidbody2D>();
+        _rb.simulated = false;
     }
 
     public void StartGame()
@@ -49,14 +52,14 @@ public class BirdController : MonoBehaviour
     {
         if (!_isActive)
             return;
-
-        if (Input.GetKeyDown("space"))
-            Flap();
+        
+        HandleInput();
     }
 
-    private void FixedUpdate()
+    private void HandleInput()
     {
-        ProcessRotation();
+        if (Input.GetKeyDown("space") || Input.GetMouseButtonDown(0))
+            Flap();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -71,21 +74,13 @@ public class BirdController : MonoBehaviour
     {
         transform.position = startPosition.position;
         transform.rotation = startPosition.rotation;
-        rb.velocity = Vector2.zero;
+        _rb.velocity = Vector2.zero;
     }
 
     private void Flap()
     {
         animator.SetTrigger(FlapTrigger);
-        rb.velocity = Vector2.up * velocity;
+        _rb.velocity = Vector2.up * velocity;
         OnFlap?.Invoke();
-    }
-
-    private void ProcessRotation()
-    {
-        if (!_isActive)
-            return;
-
-        transform.rotation = Quaternion.Euler(0f, 0f, rb.velocity.y * rotationSpeed);
     }
 }

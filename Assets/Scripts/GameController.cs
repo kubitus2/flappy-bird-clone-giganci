@@ -2,14 +2,18 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    [Header("Speed")] 
+    [SerializeField] private float startSpeed = 1.2f;
     [SerializeField] private float speedIncrement = 0.3f;
+
+    [Header("Controllers")] 
     [SerializeField] private BirdController player;
     [SerializeField] private GameObject spawner;
     [SerializeField] private GameObject startingPanel;
-    [SerializeField] private AudioManager audioManager;
     [SerializeField] private PointCounter pointCounter;
+    [SerializeField] private AudioManager audioManager;
 
-    public float Velocity { get; set; }
+    public float Velocity { get; private set; }
     public static GameController Instance { get; private set; }
 
     private void Awake()
@@ -17,7 +21,7 @@ public class GameController : MonoBehaviour
         Instance = this;
         spawner.SetActive(false);
     }
-    
+
     private void OnEnable()
     {
         StartingPanel.OnStartGame += StartGame;

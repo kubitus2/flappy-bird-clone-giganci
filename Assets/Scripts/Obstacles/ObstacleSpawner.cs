@@ -1,12 +1,11 @@
-using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class ObstacleSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject[] obstacles;
-    [SerializeField] private float spawnRate = 2f;
-    [SerializeField] private float spawnHeight = 5f;
+    [SerializeField] private float spawnRate = 4f;
+    [SerializeField] private float spawnHeight = 2f;
 
     private float timer;
 

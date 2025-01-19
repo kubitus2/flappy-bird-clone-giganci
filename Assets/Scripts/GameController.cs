@@ -34,12 +34,22 @@ public class GameController : MonoBehaviour
         player.StartGame();
     }
 
-    public void Lose()
+    private void Lose()
     {
         gameState = GameState.Menu;
         startingPanel.SetActive(true);
+        RemoveObstacles();
         spawner.SetActive(false);
         
     }
-    
+
+    private void RemoveObstacles()
+    {
+        var t = spawner.transform;
+        for (var i = 0; i < t.childCount; i++)
+        {
+            var child = t.GetChild(i);
+            Destroy(child.gameObject);
+        }
+    }
 }

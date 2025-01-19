@@ -10,7 +10,7 @@ public class ObstacleSpawner : MonoBehaviour
 
     private float timer;
 
-    private void Start()
+    private void OnEnable()
     {
         timer = 0f;
     }

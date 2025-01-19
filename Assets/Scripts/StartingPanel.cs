@@ -4,11 +4,9 @@ using UnityEngine;
 public class StartingPanel : MonoBehaviour
 {
     public static Action OnStartGame;
-    
-    private void Update()
+
+    public void StartGame()
     {
-        if(Input.GetKeyDown("space"))
-            OnStartGame?.Invoke();
-            
+        OnStartGame?.Invoke();
     }
 }
